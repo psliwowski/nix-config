@@ -159,7 +159,9 @@ configure_machine() {
     system = "${host_system}";
   };
   modules = [
-    "cli"
+    "text"
+    "monitoring"
+    "utilities"
   ];
 }
 EOF

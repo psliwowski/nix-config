@@ -63,10 +63,11 @@ Edit `~/.nix-config` to specify your username, target architecture, and VCS iden
     # homeDirectory = "/Users/<username>"; # optional, automatically resolved if omitted
   };
   modules = [
-    "cli"
+    "text"
+    "monitoring"
+    "utilities"
     "vcs"
     "agents"
-    "ghostty"
   ];
   configuration = {
     vcs.user = {
@@ -120,17 +121,19 @@ home-manager switch -b backup --flake . --override-input cfg path:$HOME/.nix-con
 
 ## Helpful Commands
 
-Common daily workflows run directly with `home-manager` and `nix`:
+You can run common workflows using the global `just` alias (`jg` = `just -g`), or directly with `nix` and `home-manager`:
 
-| Command | Action |
-| :--- | :--- |
-| `home-manager switch -b backup --flake . --override-input cfg path:$HOME/.nix-config` | Applies configuration using your local `~/.nix-config` |
-| `nix run --no-write-lock-file home-manager -- switch -b backup --flake . --override-input cfg path:$HOME/.nix-config` | Bootstraps Home Manager on a fresh machine |
-| `nix flake check` | Runs automated sandbox builds and assertion tests for all supported architectures |
-| `nix build .#homeConfigurations.default.activationPackage --override-input cfg path:$HOME/.nix-config` | Builds the activation package without applying |
-| `nix flake update` | Updates flake inputs (e.g. `nixpkgs`, `home-manager`) |
-| `nix-collect-garbage -d` | Removes old generations and frees disk space |
-| `home-manager generations` | Lists past generations you can roll back to |
+| Global Shortcut | Native Command | Action |
+| :--- | :--- | :--- |
+| `jg` | `just -g` | List all available global recipes and submodules |
+| `jg home edit` | `${VISUAL:-${EDITOR:-nano}} ~/.nix-config` | Opens local machine configuration in your default editor |
+| `jg home repo` | `cd <repo_dir> && $SHELL` | Opens a shell session inside the repository (type `exit` to return) |
+| `jg home switch` | `home-manager switch -b backup --flake . --override-input cfg path:$HOME/.nix-config` | Applies configuration using your local `~/.nix-config` |
+| `jg home check` | `nix flake check` | Runs automated sandbox builds and assertion tests for all supported architectures |
+| `jg home update` | `git pull --ff-only` + `nix flake update` | Pulls latest repository commits (via `nix#gitMinimal`) and updates flake lockfile pins |
+| `jg home upgrade` | `jg home update` + `jg home switch` | Pulls git changes, updates flake inputs, and applies configuration in one step |
+| `jg home gc` | `nix-collect-garbage -d` | Removes old generations and frees disk space |
+| `jg home generations` | `home-manager generations` | Lists past generations you can roll back to |
 
 ---
 
@@ -138,45 +141,49 @@ Common daily workflows run directly with `home-manager` and `nix`:
 
 The configuration is organized into modular, self-contained cross-platform feature sets:
 
-### 1. `modules/cli.nix` (Modern Terminal Toolbox & Shell)
-* **Shell Environment:**
-  * **GNU Bash**: Configures GNU Bash with generous history (`10,000` entries), deduplication, modern options (`globstar`, `extglob`), and local override hooks (`~/.bashrc.local`, `~/.bash_profile.local`). Automatically installs GNU Bash 5 on macOS while leveraging the host Linux shell.
+#### Core Architecture (`modules/core.nix`)
+The foundational shell environment and command runner are automatically included for all hosts (mandatory base):
+* **GNU Bash & Shell Trampolines**: Installs modern GNU Bash (`bashInteractive`) across macOS and Linux with generous history (`10,000` entries), deduplication, modern options (`globstar`, `extglob`), and local override hooks (`~/.env.local`, `~/.bashrc.local`, `~/.bash_profile.local`). Automatically trampolines host shells (macOS Zsh and host Linux Bash) into modern Nix GNU Bash (`~/.nix-profile/bin/bash -l`) upon interactive launch.
 * **Shell Prompt & Navigation:**
   * **`starship`**: Fast, customizable cross-shell prompt.
   * **`zoxide`** (`z`): Smarter `cd` command with frecency-based directory jumping.
   * **`fzf`**: Interactive fuzzy finder for history (`Ctrl-R`), file selection (`Ctrl-T`), and directory navigation (`Alt-C`) in a compact popup.
-* **Search & File Management:**
-  * **`ripgrep`** (`rg`): Ultra-fast recursive line-oriented search tool respecting `.gitignore`.
-  * **`fd`**: Fast, user-friendly alternative to `find`.
-  * **`bat`**: Syntax-highlighting `cat` replacement with Git integration (aliased to `cat`).
   * **`eza`**: Feature-rich `ls` replacement with git status, icons, and tree views (aliased to `ls`, `ll`, `la`, `lt`).
-* **Text & Data Processing:**
-  * **`sd`**: Intuitive search and replace tool replacing `sed` with standard regex.
-  * **`choose`**: Human-friendly column and field selector replacing `cut` and basic `awk`.
-  * **`jq`**: Lightweight command-line JSON processor.
-* **System & Resource Monitoring:**
-  * **`btop`**: Resource monitor showing CPU, memory, disks, network, and processes in a modern TUI.
-  * **`procs`**: Modern, colored process viewer replacing `ps`.
-  * **`dust`**: Visual, tree-style disk usage analyzer replacing `du`.
-  * **`duf`**: Colorized disk usage overview replacing `df`.
-* **Productivity & Utilities:**
-  * **`xh`**: Fast, modern HTTP client for API testing and requests (Rust equivalent of `httpie`).
-  * **`tealdeer`** (`tldr`): Fast client providing concise, practical command cheat sheets.
-  * **`just`**: Command runner for project and repository tasks.
+* **Search Primitives:**
+  * **`ripgrep`** (`rg`): Ultra-fast recursive line-oriented search tool respecting `.gitignore`.
+  * **`fd`**: Fast, user-friendly alternative to `find`, powering `fzf` file and directory widgets.
+* **Command Runner & Global Justfile:**
+  * **`just`**: Command runner guaranteed on all hosts. Configured with a global justfile at `~/.config/just/justfile` and shortcut aliases `j` (`just`) and `jg` (`just -g`).
+  * Submodules (`mod? <name>`) provide global namespaces (e.g. `jg home <recipe>`), and `mod? local` automatically discovers machine-specific custom recipes placed at `~/.config/just/local.just`.
 
-### 2. `modules/vcs.nix` (Version Control & Collaboration)
-* **`git`**: Sane modern defaults (`main` default branch, `pull.rebase = true`, `push.autoSetupRemote = true`). Commit identity is configured declaratively via `vcs.user` in `~/.nix-config`.
-* **`jujutsu`** (`jj`): Next-generation Git-compatible VCS with first-class conflict handling, working-copy snapshots, and pager integration with Delta. Commit identity configured via `vcs.user`.
+### Optional Feature Modules
+Configure in `~/.nix-config` under `modules = [ ... ]`:
+
+#### 1. `modules/text.nix` (File Inspection & Data Processing)
+* **`bat`**: Syntax-highlighting `cat` replacement with Git integration (aliased to `cat`).
+* **`sd`**: Intuitive search and replace tool replacing `sed` with standard regex.
+* **`choose`**: Human-friendly column and field selector replacing `cut` and basic `awk`.
+* **`jq`**: Lightweight command-line JSON processor.
+
+#### 2. `modules/monitoring.nix` (System & Resource Monitoring)
+* **`btop`**: Resource monitor showing CPU, memory, disks, network, and processes in a modern TUI.
+* **`procs`**: Modern, colored process viewer replacing `ps`.
+* **`dust`**: Visual, tree-style disk usage analyzer replacing `du`.
+* **`duf`**: Colorized disk usage overview replacing `df`.
+
+#### 3. `modules/utilities.nix` (Productivity & Networking)
+* **`xh`**: Fast, modern HTTP client for API testing and requests (Rust equivalent of `httpie`).
+* **`tealdeer`** (`tldr`): Fast client providing concise, practical command cheat sheets.
+
+#### 4. `modules/vcs.nix` (Version Control & Collaboration)
+* **`git`** (`gitMinimal`): Lightweight, dependency-optimized build (~35 MB vs ~1.4 GB closure) with sane modern defaults (`main` default branch, `pull.rebase = true`, `push.autoSetupRemote = true`). Commit identity is configured declaratively via `vcs.user` in `~/.nix-config`. Automatically includes `~/.gitconfig.local` for machine-specific overrides (signing keys, work proxies, credential helpers).
+* **`jujutsu`** (`jj`): Next-generation Git-compatible VCS with first-class conflict handling, working-copy snapshots, and pager integration with Delta. Commit identity configured via `vcs.user`. Supports local overrides via `~/.config/jj/conf.d/*.toml`.
 * **`delta`**: Syntax-highlighting pager for git and jujutsu diffs.
 * **`gh`**: Official GitHub CLI.
 
-### 3. `modules/agents.nix` (AI Coding Agents)
+#### 5. `modules/agents.nix` (AI Coding Agents)
 * **`antigravity-cli`** (`agy`): Google's Go-based terminal user interface agent client.
 * **`codex`**: Lightweight coding agent that runs directly in your terminal.
-
-### 4. `modules/ghostty.nix` (Terminal Emulator)
-* **`ghostty`**: Declaratively manages Ghostty terminal configuration (`~/.config/ghostty/config`), automatically setting `command = "${pkgs.bashInteractive}/bin/bash -l"` and shell integration features.
-  > **Note:** macOS defaults to `/bin/zsh`. For terminal emulators not managed by this configuration (Terminal.app, iTerm2, Alacritty), configure them to launch with `~/.nix-profile/bin/bash -l`.
 
 ---
 

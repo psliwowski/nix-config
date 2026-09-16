@@ -117,11 +117,22 @@ clean_dotfiles() {
     ".bashrc"
     ".bash_profile"
     ".profile"
+    ".zshrc"
+    ".zprofile"
+    ".zshenv"
     ".gitconfig"
     ".config/git/config"
     ".config/jj/config.toml"
     ".config/starship.toml"
     ".config/ghostty/config"
+    ".config/bat/config"
+    ".config/btop/btop.conf"
+    ".config/fd/ignore"
+    ".config/ripgrep/ripgreprc"
+    ".config/tealdeer/config.toml"
+    "Library/Application Support/tealdeer/config.toml"
+    ".config/just/justfile"
+    ".config/just/home.just"
   )
   candidate_paths+=("${known_paths[@]}")
 
@@ -204,13 +215,13 @@ clean_home_manager_state() {
 clean_user_config() {
   title "Step 3: Cleaning Configuration File"
 
-  if [ ! -e "$USER_CONFIG" ]; then
+  if [ ! -e "$USER_CONFIG" ] && [ ! -e "${USER_CONFIG}.bak" ]; then
     info "No configuration file found at $USER_CONFIG."
     return 0
   fi
 
-  mv "$USER_CONFIG" "${USER_CONFIG}.bak"
-  success "Archived configuration file to ${USER_CONFIG}.bak."
+  rm -f "$USER_CONFIG" "${USER_CONFIG}.bak"
+  success "Removed configuration file at $USER_CONFIG."
 }
 
 clean_repo() {

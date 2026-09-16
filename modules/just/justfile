@@ -1,0 +1,11 @@
+set dotenv-load := false
+
+# Nix Home Manager Commands
+mod? home
+
+# Machine-specific local commands (~/.config/just/local.just)
+mod? local
+
+# Default recipe: list all available global recipes and submodules
+default:
+    @just --global-justfile --list --list-submodules

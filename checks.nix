@@ -10,10 +10,11 @@ in {
         system = "aarch64-darwin";
       };
       modules = [
-        "cli"
+        "text"
+        "monitoring"
+        "utilities"
         "vcs"
         "agents"
-        "ghostty"
       ];
     }).activationPackage;
   };
@@ -23,7 +24,9 @@ in {
         system = "x86_64-linux";
       };
       modules = [
-        "cli"
+        "text"
+        "monitoring"
+        "utilities"
         "vcs"
         "agents"
       ];

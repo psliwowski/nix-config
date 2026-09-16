@@ -52,6 +52,7 @@ rec {
             host = cfg.host;
           };
           modules = [
+            (modulesDir + "/core.nix")
             {
               programs.home-manager.enable = true;
               home = {

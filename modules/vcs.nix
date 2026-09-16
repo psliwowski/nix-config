@@ -26,7 +26,8 @@ in {
       settings = {
         ui = {
           paginate = "auto";
-          pager = "delta";
+          pager = lib.getExe pkgs.delta;
+          diff-formatter = ":git";
         };
       } // userSettings;
     };
@@ -34,6 +35,10 @@ in {
     # 2. Git
     programs.git = {
       enable = true;
+      package = pkgs.gitMinimal;
+      includes = [
+        { path = "~/.gitconfig.local"; }
+      ];
       settings = {
         init.defaultBranch = "main";
         pull.rebase = true;

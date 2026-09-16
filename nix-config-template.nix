@@ -6,10 +6,11 @@
     # homeDirectory = "/Users/nix"; # optional
   };
   modules = [
-    "cli"
+    "text"
+    "monitoring"
+    "utilities"
     "vcs"
     "agents"
-    "ghostty"
   ];
   configuration = {
     vcs.user = {
