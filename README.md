@@ -18,13 +18,33 @@ Before using this configuration, ensure the following are installed on your mach
 
 ---
 
-## Getting Started
+## Quick Start (Automated Installer)
+
+Bootstrap a fresh machine with a single command (installs Nix, clones this repository, generates base `~/.nix-config`, and activates Home Manager):
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/psliwowski/nix-config/main/install.sh)"
+```
+
+The installer will:
+1. **Check Nix**: Reuses Nix if already present; otherwise installs Nix via the [Determinate Nix Installer](https://github.com/DeterminateSystems/nix-installer).
+2. **Checkout Repository**: Checks if `~/.config/nix-config` already exists (updates if present). Uses lightweight temporary `nix#gitMinimal` (`nix run nixpkgs#gitMinimal`) to clone.
+3. **Configure Machine**: Detects machine architecture and active user to generate your base `~/.nix-config` profile.
+4. **Switch**: Activates your configuration with Home Manager using `--override-input cfg path:$HOME/.nix-config`.
+
+---
+
+## Manual Setup
 
 ### 1. Clone the Repository
 ```bash
-git clone <repo-url> ~/config/nix-config
-cd ~/config/nix-config
+git clone https://github.com/psliwowski/nix-config.git ~/.config/nix-config
+cd ~/.config/nix-config
 ```
+> **Tip:** If Git is not installed on your host, you can checkout using lightweight `nix#gitMinimal`:
+> ```bash
+> nix run nixpkgs#gitMinimal -- clone https://github.com/psliwowski/nix-config.git ~/.config/nix-config
+> ```
 
 ### 2. Configure Your Machine
 Create your local machine configuration file at `~/.nix-config` from the provided template:
@@ -61,7 +81,7 @@ Edit `~/.nix-config` to specify your username, target architecture, and VCS iden
 Run the initial activation command pointing to your local `~/.nix-config`. You do not need Home Manager pre-installed; Nix will run it ephemerally:
 
 ```bash
-nix run home-manager -- switch -b backup --flake . --override-input cfg path:$HOME/.nix-config
+nix run --no-write-lock-file home-manager -- switch -b backup --flake . --override-input cfg path:$HOME/.nix-config
 ```
 
 > **Note:** Machine profile and user identity are loaded from `~/.nix-config` via `--override-input cfg path:$HOME/.nix-config`. The repository defaults `cfg` to `nix-config-template.nix` so the flake remains fully hermetic and testable.
@@ -105,7 +125,7 @@ Common daily workflows run directly with `home-manager` and `nix`:
 | Command | Action |
 | :--- | :--- |
 | `home-manager switch -b backup --flake . --override-input cfg path:$HOME/.nix-config` | Applies configuration using your local `~/.nix-config` |
-| `nix run home-manager -- switch -b backup --flake . --override-input cfg path:$HOME/.nix-config` | Bootstraps Home Manager on a fresh machine |
+| `nix run --no-write-lock-file home-manager -- switch -b backup --flake . --override-input cfg path:$HOME/.nix-config` | Bootstraps Home Manager on a fresh machine |
 | `nix flake check` | Runs automated sandbox builds and assertion tests for all supported architectures |
 | `nix build .#homeConfigurations.default.activationPackage --override-input cfg path:$HOME/.nix-config` | Builds the activation package without applying |
 | `nix flake update` | Updates flake inputs (e.g. `nixpkgs`, `home-manager`) |
@@ -157,4 +177,25 @@ The configuration is organized into modular, self-contained cross-platform featu
 ### 4. `modules/ghostty.nix` (Terminal Emulator)
 * **`ghostty`**: Declaratively manages Ghostty terminal configuration (`~/.config/ghostty/config`), automatically setting `command = "${pkgs.bashInteractive}/bin/bash -l"` and shell integration features.
   > **Note:** macOS defaults to `/bin/zsh`. For terminal emulators not managed by this configuration (Terminal.app, iTerm2, Alacritty), configure them to launch with `~/.nix-profile/bin/bash -l`.
+
+---
+
+## Uninstallation
+
+To completely remove `nix-config`, safely unlink Home Manager dotfiles, restore your original `.backup` files, and clean up local state and caches:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/psliwowski/nix-config/main/uninstall.sh)"
+```
+
+Or run locally from the repository:
+
+```bash
+./uninstall.sh
+```
+
+Options:
+* `-y, --yes, -f, --force`: Non-interactive mode (skips confirmation prompt).
+* `--remove-nix`: Also invokes the Determinate Nix uninstaller (`/nix/nix-installer uninstall`).
+
 

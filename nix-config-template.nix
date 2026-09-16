@@ -1,4 +1,5 @@
 {
+  # WARNING: Do not change username or system; must match your active OS user and machine architecture.
   host = {
     username = "nix";
     system = "aarch64-darwin";

@@ -1,5 +1,5 @@
 {
-  description = "Home Manager Configuration";
+  description = "Standalone Home Manager Configuration";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
