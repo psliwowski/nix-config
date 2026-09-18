@@ -113,7 +113,7 @@ Whenever you edit your `~/.nix-config` or `.nix` module files in this repository
 To pull the latest software versions from `nixpkgs`:
 
 ```bash
-nix flake update                                                                     # Updates lockfile pins
+just update-pkgs                                                                      # Pulls, updates nixpkgs, commits, and pushes
 home-manager switch -b backup --flake . --override-input cfg path:$HOME/.nix-config  # Applies updated packages
 ```
 
@@ -129,11 +129,25 @@ You can run common workflows using the global `just` alias (`jg` = `just -g`), o
 | `jg home edit` | `${VISUAL:-${EDITOR:-nano}} ~/.nix-config` | Opens local machine configuration in your default editor |
 | `jg home repo` | `cd <repo_dir> && $SHELL` | Opens a shell session inside the repository (type `exit` to return) |
 | `jg home switch` | `home-manager switch -b backup --flake . --override-input cfg path:$HOME/.nix-config` | Applies configuration using your local `~/.nix-config` |
-| `jg home check` | `nix flake check` | Runs automated sandbox builds and assertion tests for all supported architectures |
-| `jg home update` | `git pull --ff-only` + `nix flake update` | Pulls latest repository commits (via `nix#gitMinimal`) and updates flake lockfile pins |
-| `jg home upgrade` | `jg home update` + `jg home switch` | Pulls git changes, updates flake inputs, and applies configuration in one step |
+| `jg home pull` | `git pull --ff-only` | Pulls committed configuration and package updates (via `nix#gitMinimal`) |
 | `jg home gc` | `nix-collect-garbage -d` | Removes old generations and frees disk space |
 | `jg home generations` | `home-manager generations` | Lists past generations you can roll back to |
+
+---
+
+## Repository Commands
+
+Run these from this repository using the root `justfile`:
+
+| Command | Action |
+| :--- | :--- |
+| `just` | Lists available repository recipes |
+| `just check` | Evaluates checks for macOS and Linux without building or updating the lockfile |
+| `just update-pkgs` | Pulls, updates only `nixpkgs`, commits only `flake.lock`, and pushes |
+
+`update-pkgs` fails if there are uncommitted changes (including staged and untracked files), then runs `git pull`, updates `nixpkgs`, commits the lockfile, and runs `git push`. It assumes the branch already has a configured upstream. Other flake inputs are left pinned. If `nixpkgs` is unchanged, no commit or push is made. Run `just check` separately when needed.
+
+Global host recipes live in `modules/just/home.just`, exposed as `jg home <recipe>` by the global entrypoint. They use the repository at `$XDG_CONFIG_HOME/nix-config` (default `~/.config/nix-config`); set `NIX_CONFIG_REPO` to use another checkout.
 
 ---
 
@@ -204,5 +218,3 @@ Or run locally from the repository:
 Options:
 * `-y, --yes, -f, --force`: Non-interactive mode (skips confirmation prompt).
 * `--remove-nix`: Also invokes the Determinate Nix uninstaller (`/nix/nix-installer uninstall`).
-
-
