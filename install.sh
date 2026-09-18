@@ -158,11 +158,7 @@ configure_machine() {
     username = "${host_user}";
     system = "${host_system}";
   };
-  modules = [
-    "text"
-    "monitoring"
-    "utilities"
-  ];
+  modules = [];
 }
 EOF
 
