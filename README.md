@@ -45,7 +45,7 @@ jg home switch
 
 ### `text` (optional)
 
-- **bat** — display files with syntax highlighting; also used by the `cat` alias.
+- **bat** — display files with syntax highlighting.
 - **sd** — search and replace text.
 - **choose** — select columns and fields.
 - **jq** — query and transform JSON.

@@ -5,11 +5,8 @@
     config = {
       theme = "base16";
       pager = "less -FR";
+      style = "header-filename,numbers,changes,rule,snip";
     };
-  };
-
-  programs.bash.shellAliases = {
-    cat = "bat -pp";
   };
 
   programs.jq.enable = true;
