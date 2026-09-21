@@ -1,4 +1,10 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   # 1. Base command runner for global tasks
   home.packages = [ pkgs.just ];
 
@@ -18,7 +24,10 @@
       fi
     '';
     enableCompletion = true;
-    historyControl = [ "ignoredups" "ignorespace" ];
+    historyControl = [
+      "ignoredups"
+      "ignorespace"
+    ];
     historySize = 10000;
     historyFileSize = 50000;
     shellOptions = [
@@ -52,7 +61,7 @@
       ll = "eza -l";
       la = "eza -la";
       lt = "eza --tree";
-      j  = "just";
+      j = "just";
       jg = "just -g";
       hms = "just -f ${lib.escapeShellArg "${config.xdg.configHome}/just/home.just"} switch";
     };

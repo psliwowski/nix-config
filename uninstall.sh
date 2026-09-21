@@ -73,7 +73,7 @@ confirm_uninstall() {
   fi
 
   case "$reply" in
-    [yY]|[yY][eE][sS]) return 0 ;;
+    [yY] | [yY][eE][sS]) return 0 ;;
     *)
       info "Uninstallation cancelled."
       exit 0
@@ -295,7 +295,7 @@ main() {
 
   while [ $# -gt 0 ]; do
     case "$1" in
-      -y|--yes|-f|--force|--non-interactive)
+      -y | --yes | -f | --force | --non-interactive)
         NON_INTERACTIVE=1
         shift
         ;;
@@ -303,7 +303,7 @@ main() {
         REMOVE_NIX=1
         shift
         ;;
-      -h|--help)
+      -h | --help)
         print_usage
         exit 0
         ;;

@@ -1,12 +1,18 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.container.machine;
   machineSettings = lib.filterAttrs (_: value: value != null) {
     cpus = cfg.cpu;
-    memory = cfg.memory;
+    inherit (cfg) memory;
     disk_size = cfg.disk;
   };
-in {
+in
+{
   options.container.machine = {
     cpu = lib.mkOption {
       type = lib.types.nullOr lib.types.ints.positive;
@@ -35,11 +41,10 @@ in {
       docker-compose
     ];
 
-    xdg.configFile."containers/containers.conf.d/50-machine.conf" =
-      lib.mkIf (machineSettings != { }) {
-        source = (pkgs.formats.toml { }).generate "podman-machine.conf" {
-          machine = machineSettings;
-        };
+    xdg.configFile."containers/containers.conf.d/50-machine.conf" = lib.mkIf (machineSettings != { }) {
+      source = (pkgs.formats.toml { }).generate "podman-machine.conf" {
+        machine = machineSettings;
       };
+    };
   };
 }

@@ -1,0 +1,2 @@
+# Keep dotted Home Manager options grouped by feature rather than by prefix.
+disabled = ["repeated_keys"]

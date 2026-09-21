@@ -14,7 +14,8 @@ Open a new terminal after installation to use the configured shell and commands.
 
 ## Configure
 
-Run `jg home edit` to edit `~/.nix-config`. Only core tools are enabled by default. Use `modules` to add optional modules and `configuration` for custom Home Manager settings:
+Run `jg home edit` to edit `~/.nix-config`. Only core tools are enabled by default. Use `modules` to
+add optional modules and `configuration` for custom Home Manager settings:
 
 ```nix
 modules = [ "text" "monitoring" "utilities" ];
@@ -47,7 +48,8 @@ jg home switch
 ### `text` (optional)
 
 - **Neovim** (`nvim`, `vim`, `vi`) — extensible modal text editor.
-- **LazyVim** — Neovim configuration framework managed in `modules/nvim/` and linked to `~/.config/nvim`.
+- **LazyVim** — Neovim configuration framework managed in `modules/nvim/` and linked to
+  `~/.config/nvim`.
 - **bat** — display files with syntax highlighting.
 - **sd** — search and replace text.
 - **choose** — select columns and fields.
@@ -59,7 +61,12 @@ jg home switch
 - **bash-language-server** — language server for Shell scripts (`bashls`).
 - **shellcheck** — linter and static analysis for Shell scripts.
 - **shfmt** — formatter for Shell scripts.
-- Includes `tree-sitter` CLI for compiling Treesitter parsers (assumes host OS provides C compiler and `make`).
+- **Prettier** — formatter for Markdown and other supported languages.
+- **markdownlint-cli2** — Markdown structure and style checks.
+- **Marksman** — Markdown language server for links, headings, and references.
+- **markdown-toc** — update explicitly marked tables of contents.
+- Includes `tree-sitter` CLI for compiling Treesitter parsers (assumes host OS provides C compiler
+  and `make`).
 
 ### `monitoring` (optional)
 
@@ -78,9 +85,9 @@ jg home switch
 - **Podman** — run containers.
 - **Docker Compose** — run multi-container applications with `podman compose`.
 
-Add `"container"` to your `modules` list to enable it. On macOS, create a VM
-once with `podman machine init`, then start it with `podman machine start`.
-If you already have a Podman machine, start the existing machine instead.
+Add `"container"` to your `modules` list to enable it. On macOS, create a VM once with
+`podman machine init`, then start it with `podman machine start`. If you already have a Podman
+machine, start the existing machine instead.
 
 Optionally set defaults for new machines in your configuration:
 
@@ -92,41 +99,40 @@ configuration.container.machine = {
 };
 ```
 
-Each setting is optional; omitted or `null` values keep Podman's defaults.
-These settings generate `~/.config/containers/containers.conf.d/50-machine.conf`
-and apply when running `podman machine init`. They do not change existing VMs.
+Each setting is optional; omitted or `null` values keep Podman's defaults. These settings generate
+`~/.config/containers/containers.conf.d/50-machine.conf` and apply when running
+`podman machine init`. They do not change existing VMs.
 
-The container module also installs `jg podman recreate`. It asks for confirmation,
-stops and removes the default VM, then creates a replacement using the applied
-machine defaults and leaves it stopped. This deletes the old VM's containers,
-images, and volumes.
+The container module also installs `jg podman recreate`. It asks for confirmation, stops and removes
+the default VM, then creates a replacement using the applied machine defaults and leaves it stopped.
+This deletes the old VM's containers, images, and volumes.
 
-Each command below starts the existing default VM if needed. Run `up`, `down`,
-and `pull` from the directory containing your Compose file; `ps`, `images`, and
-`usage` work from any directory and report across projects:
+Each command below starts the existing default VM if needed. Run `up`, `down`, and `pull` from the
+directory containing your Compose file; `ps`, `images`, and `usage` work from any directory and
+report across projects:
 
-| Command | Action |
-| :--- | :--- |
-| `jg podman start` | Start the default VM if stopped. |
-| `jg podman stop` | Stop the default VM if no containers are running (`-f`/`--force` to force). |
-| `jg podman recreate` | Delete and recreate the default VM using applied config. |
-| `jg podman up` | Start services in the background (`compose up -d`). |
-| `jg podman down` | Remove the project's containers and networks, then stop the VM if no containers remain running. |
-| `jg podman pull` | Download service images, then stop the VM if no containers are running. |
-| `jg podman ps` | List all containers, then stop the VM if no containers are running. |
-| `jg podman images` | List images, then stop the VM if no containers are running. |
-| `jg podman usage` | Show container, image, and volume disk usage, then stop the VM if no containers are running. |
+| Command              | Action                                                                                          |
+| :------------------- | :---------------------------------------------------------------------------------------------- |
+| `jg podman start`    | Start the default VM if stopped.                                                                |
+| `jg podman stop`     | Stop the default VM if no containers are running (`-f`/`--force` to force).                     |
+| `jg podman recreate` | Delete and recreate the default VM using applied config.                                        |
+| `jg podman up`       | Start services in the background (`compose up -d`).                                             |
+| `jg podman down`     | Remove the project's containers and networks, then stop the VM if no containers remain running. |
+| `jg podman pull`     | Download service images, then stop the VM if no containers are running.                         |
+| `jg podman ps`       | List all containers, then stop the VM if no containers are running.                             |
+| `jg podman images`   | List images, then stop the VM if no containers are running.                                     |
+| `jg podman usage`    | Show container, image, and volume disk usage, then stop the VM if no containers are running.    |
 
-Service names and Compose options are forwarded, for example `jg podman up db`
-or `jg podman up --build`. `ps`, `images`, and `usage` forward other options to
-Podman, for example `jg podman usage --verbose`.
-Automatic shutdown happens only after a successful command and container check, and keeps the VM running if other containers are
-active. These helpers assume your current Podman connection targets the default
-machine. If the VM does not exist, create it first with `podman machine init`.
+Service names and Compose options are forwarded, for example `jg podman up db` or
+`jg podman up --build`. `ps`, `images`, and `usage` forward other options to Podman, for example
+`jg podman usage --verbose`. Automatic shutdown happens only after a successful command and
+container check, and keeps the VM running if other containers are active. These helpers assume your
+current Podman connection targets the default machine. If the VM does not exist, create it first
+with `podman machine init`.
 
-Run `jg home switch` to install the commands and apply any machine setting
-changes before recreating the VM. Start the replacement with
-`podman machine start` when needed. Use native `podman` commands for other actions.
+Run `jg home switch` to install the commands and apply any machine setting changes before recreating
+the VM. Start the replacement with `podman machine start` when needed. Use native `podman` commands
+for other actions.
 
 ### `vcs` (optional)
 
@@ -152,23 +158,50 @@ configuration.vcs.user = {
 
 `jg` is an alias for `just -g`; run it to list global commands.
 
-| Command | Action |
-| :--- | :--- |
-| `jg home edit` | Edit `~/.nix-config`. |
-| `jg home switch` | Apply your configuration. |
-| `hms` | Direct shortcut and fallback for `jg home switch`. |
-| `jg home pull` | Pull committed configuration and package updates. Run `jg home switch` afterward to apply them. |
-| `jg home repo` | Open a shell in the repository; use `exit` to return. |
-| `jg home generations` | List past Home Manager generations. |
-| `jg home gc` | Delete old Nix generations and collect garbage. |
+| Command               | Action                                                                                          |
+| :-------------------- | :---------------------------------------------------------------------------------------------- |
+| `jg home edit`        | Edit `~/.nix-config`.                                                                           |
+| `jg home switch`      | Apply your configuration.                                                                       |
+| `hms`                 | Direct shortcut and fallback for `jg home switch`.                                              |
+| `jg home pull`        | Pull committed configuration and package updates. Run `jg home switch` afterward to apply them. |
+| `jg home repo`        | Open a shell in the repository; use `exit` to return.                                           |
+| `jg home generations` | List past Home Manager generations.                                                             |
+| `jg home gc`          | Delete old Nix generations and collect garbage.                                                 |
 
 For repository maintenance, run these inside the checkout:
 
-| Command | Action |
-| :--- | :--- |
-| `just` | List repository commands. |
-| `just check` | Evaluate macOS and Linux checks without building and validate all justfiles. |
-| `just update-pkgs` | Update nixpkgs, commit, and push. |
+| Command            | Action                                                                                         |
+| :----------------- | :--------------------------------------------------------------------------------------------- |
+| `just`             | List repository commands.                                                                      |
+| `just fmt`         | Format Nix, Lua, shell, and Markdown files.                                                    |
+| `just fmt-check`   | Check formatting without modifying files.                                                      |
+| `just lint`        | Run Statix, deadnix, ShellCheck, markdownlint-cli2, and justfile validation.                   |
+| `just check`       | Run formatting and lint checks, then evaluate macOS and Linux configurations without building. |
+| `just update-pkgs` | Update nixpkgs, commit, and push.                                                              |
+
+Formatting and linting commands use `nix develop` to load tools pinned by `flake.lock`; no Home
+Manager activation is needed. You can also enter the development shell with `nix develop`. Treefmt
+formats Nix with `nixfmt`, Lua with StyLua, shell scripts with `shfmt`, and Markdown with Prettier.
+Linting covers Nix, standalone shell scripts, and Markdown; justfiles are syntax-checked. Run
+`just fmt` before `just check`.
+
+### Formatting defaults and Markdown editing
+
+This repository targets 100 columns using its EditorConfig, StyLua, Prettier, and markdownlint
+configuration. Nixfmt also uses 100 columns. Neovim uses project formatting settings and shows a
+guide after column 100. Other projects use their own configuration or the formatters' defaults; Home
+Manager installs standard tools without global formatting overrides.
+
+This is a formatting target, not a universal hard limit. Shell formatting with `shfmt` does not wrap
+long commands, and some language formatters have no configurable width. Markdown lint checks prose
+and headings at 100 columns, with exceptions for code blocks, tables, and unbreakable URLs. Neovim
+shows the column guide without imposing a global wrapping rule.
+
+LazyVim's Markdown extra provides completion and navigation through Marksman, lint diagnostics,
+rendered Markdown, and browser preview. Use `<leader>um` to toggle rendered Markdown and
+`<leader>cp` for browser preview. Tables of contents update when the document contains
+`<!-- toc -->` and `<!-- tocstop -->` markers. Neovim uses LazyVim's default Markdown formatting
+pipeline, including Prettier, conditional markdownlint fixes, and table-of-contents updates.
 
 ## Uninstall
 
@@ -176,6 +209,9 @@ For repository maintenance, run these inside the checkout:
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/psliwowski/nix-config/main/uninstall.sh)"
 ```
 
-Or run `./uninstall.sh` from the checkout. It removes Home Manager profiles, managed symlinks, local state, and `~/.nix-config`, and restores backed-up dotfiles. The checkout is also removed unless you run the uninstaller from inside it.
+Or run `./uninstall.sh` from the checkout. It removes Home Manager profiles, managed symlinks, local
+state, and `~/.nix-config`, and restores backed-up dotfiles. The checkout is also removed unless you
+run the uninstaller from inside it.
 
-Nix remains installed by default. When running the local script, use `--remove-nix` to also invoke the Determinate Nix uninstaller, or `--yes` to skip confirmation.
+Nix remains installed by default. When running the local script, use `--remove-nix` to also invoke
+the Determinate Nix uninstaller, or `--yes` to skip confirmation.

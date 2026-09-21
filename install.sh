@@ -17,7 +17,6 @@ setup_colors() {
   if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
     COLOR_RESET=$'\033[0m'
     COLOR_BOLD=$'\033[1m'
-    COLOR_DIM=$'\033[2m'
     COLOR_BLUE=$'\033[34m'
     COLOR_GREEN=$'\033[32m'
     COLOR_YELLOW=$'\033[33m'
@@ -26,7 +25,6 @@ setup_colors() {
   else
     COLOR_RESET=""
     COLOR_BOLD=""
-    COLOR_DIM=""
     COLOR_BLUE=""
     COLOR_GREEN=""
     COLOR_YELLOW=""
@@ -151,7 +149,7 @@ configure_machine() {
   info "Detected user:   ${host_user}"
   info "Detected system: ${host_system}"
 
-  cat > "$USER_CONFIG" <<EOF
+  cat >"$USER_CONFIG" <<EOF
 {
   # WARNING: Do not change username or system; must match your active OS user and machine architecture.
   host = {
@@ -307,7 +305,7 @@ main() {
         SKIP_DETECT_BACKUPS=1
         shift
         ;;
-      -h|--help)
+      -h | --help)
         print_usage
         exit 0
         ;;

@@ -1,18 +1,27 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.vcs.user;
   userSettings = {
-    user = (lib.optionalAttrs (cfg.name != null) { name = cfg.name; })
-        // (lib.optionalAttrs (cfg.email != null) { email = cfg.email; });
+    user =
+      (lib.optionalAttrs (cfg.name != null) { inherit (cfg) name; })
+      // (lib.optionalAttrs (cfg.email != null) { inherit (cfg) email; });
   };
-  colors = let
-    esc = builtins.fromJSON "\"\\u001b\"";
-  in {
-    pink = "${esc}[38;5;212m";
-    blue = "${esc}[38;5;75m";
-    reset = "${esc}[0m";
-  };
-in {
+  colors =
+    let
+      esc = builtins.fromJSON "\"\\u001b\"";
+    in
+    {
+      pink = "${esc}[38;5;212m";
+      blue = "${esc}[38;5;75m";
+      reset = "${esc}[0m";
+    };
+in
+{
   options.vcs.user = {
     name = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
@@ -31,8 +40,12 @@ in {
     programs.jujutsu = {
       enable = true;
       settings = {
-        aliases.blame = [ "file" "annotate" ];
-      } // userSettings;
+        aliases.blame = [
+          "file"
+          "annotate"
+        ];
+      }
+      // userSettings;
     };
 
     # 2. Git (user settings & delta pager)
@@ -65,11 +78,11 @@ in {
           blame-code-style = "syntax";
           blame-palette = "normal black";
 
-	  #File Header
+          #File Header
           file-style = "bold yellow";
           file-decoration-style = "none";
 
-	  # Hunk Header
+          # Hunk Header
           hunk-header-style = "omit-code-fragment";
 
           # Additions & Deletions

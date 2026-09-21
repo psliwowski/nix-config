@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   # 1. Neovim text editor & LazyVim configuration
   programs.neovim = {
     enable = true;
@@ -16,6 +17,12 @@
 
       # JSON language server
       vscode-langservers-extracted
+
+      # Markdown language server, formatter, linter & table of contents
+      marksman
+      prettier
+      markdownlint-cli2
+      markdown-toc
 
       # Nix language server, formatter & linter
       nil
@@ -58,5 +65,9 @@
     nixfmt
     shfmt
     shellcheck
+    prettier
+    markdownlint-cli2
+    markdown-toc
+    marksman
   ];
 }
