@@ -16,7 +16,7 @@ start:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    state=$(podman machine inspect --format '{{.State}}')
+    state=$(podman machine inspect --format '{{ '{{' }}.State}}')
     case "$state" in
         running) ;;
         stopped) podman machine start ;;
@@ -29,7 +29,7 @@ stop force="false":
     #!/usr/bin/env bash
     set -euo pipefail
 
-    state=$(podman machine inspect --format '{{.State}}')
+    state=$(podman machine inspect --format '{{ '{{' }}.State}}')
     case "$state" in
         stopped) exit 0 ;;
         running) ;;

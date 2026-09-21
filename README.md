@@ -46,10 +46,20 @@ jg home switch
 
 ### `text` (optional)
 
+- **Neovim** (`nvim`, `vim`, `vi`) — extensible modal text editor.
+- **LazyVim** — Neovim configuration framework managed in `modules/nvim/` and linked to `~/.config/nvim`.
 - **bat** — display files with syntax highlighting.
 - **sd** — search and replace text.
 - **choose** — select columns and fields.
 - **jq** — query and transform JSON.
+- **nil** — language server for Nix (`nil_ls`).
+- **nixfmt** — formatter for Nix code.
+- **lua-language-server** — language server for Lua (`lua_ls`).
+- **stylua** — code formatter for Lua.
+- **bash-language-server** — language server for Shell scripts (`bashls`).
+- **shellcheck** — linter and static analysis for Shell scripts.
+- **shfmt** — formatter for Shell scripts.
+- Includes `tree-sitter` CLI for compiling Treesitter parsers (assumes host OS provides C compiler and `make`).
 
 ### `monitoring` (optional)
 
@@ -146,6 +156,7 @@ configuration.vcs.user = {
 | :--- | :--- |
 | `jg home edit` | Edit `~/.nix-config`. |
 | `jg home switch` | Apply your configuration. |
+| `hms` | Direct shortcut and fallback for `jg home switch`. |
 | `jg home pull` | Pull committed configuration and package updates. Run `jg home switch` afterward to apply them. |
 | `jg home repo` | Open a shell in the repository; use `exit` to return. |
 | `jg home generations` | List past Home Manager generations. |
@@ -156,7 +167,7 @@ For repository maintenance, run these inside the checkout:
 | Command | Action |
 | :--- | :--- |
 | `just` | List repository commands. |
-| `just check` | Evaluate macOS and Linux checks without building. |
+| `just check` | Evaluate macOS and Linux checks without building and validate all justfiles. |
 | `just update-pkgs` | Update nixpkgs, commit, and push. |
 
 ## Uninstall

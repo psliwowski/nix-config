@@ -1,6 +1,11 @@
-{ lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }: {
   # 1. Base command runner for global tasks
   home.packages = [ pkgs.just ];
+
+  # Ensure user-installed Nix tools take priority over system and Homebrew binaries
+  home.sessionPath = [
+    "$HOME/.nix-profile/bin"
+  ];
 
   # 2. Shell Environment (GNU Bash)
   programs.bash = {
@@ -49,14 +54,13 @@
       lt = "eza --tree";
       j  = "just";
       jg = "just -g";
+      hms = "just -f ${lib.escapeShellArg "${config.xdg.configHome}/just/home.just"} switch";
     };
   };
 
   # 3. macOS defaults to /bin/zsh. Ensure interactive zsh sessions switch to Nix GNU Bash.
-  programs.zsh = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-    enable = true;
-    package = null;
-    initContent = lib.mkBefore ''
+  home.file.".zshrc" = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+    text = ''
       if [[ -o interactive ]] && [[ -x "$HOME/.nix-profile/bin/bash" ]]; then
         export SHELL="$HOME/.nix-profile/bin/bash"
         exec "$HOME/.nix-profile/bin/bash" -l
