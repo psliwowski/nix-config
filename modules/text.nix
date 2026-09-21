@@ -6,6 +6,10 @@
       theme = "base16";
       pager = "less -FR";
       style = "header-filename,numbers,changes,rule,snip";
+      map-syntax = [
+        "*justfile:Makefile"
+        "*.just:Makefile"
+      ];
     };
   };
 
