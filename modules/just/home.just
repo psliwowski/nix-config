@@ -27,7 +27,7 @@ pull:
     set -euo pipefail
 
     echo "==> Pulling latest repository changes..."
-    nix run nixpkgs#gitMinimal -- -C "{{repo_dir}}" pull --ff-only
+    git -C "{{repo_dir}}" pull --ff-only
 
 # Remove old Nix generations and run garbage collection
 gc:

@@ -34,6 +34,7 @@ jg home switch
 ### Core (always enabled)
 
 - **Bash** — interactive shell.
+- **Git** (`gitMinimal`) — version control.
 - **Starship** — shell prompt.
 - **zoxide** (`z`) — jump to frequently used directories.
 - **fzf** — fuzzy search for files and history.
@@ -119,7 +120,6 @@ changes before recreating the VM. Start the replacement with
 
 ### `vcs` (optional)
 
-- **Git** (`gitMinimal`) — version control.
 - **Jujutsu** (`jj`) — Git-compatible version control.
 - **delta** — readable diffs.
 - **GitHub CLI** (`gh`) — work with GitHub from the terminal.

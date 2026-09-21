@@ -123,4 +123,36 @@
   # 7. Global command runner (just)
   xdg.configFile."just/justfile".source = ./just/justfile;
   xdg.configFile."just/home.just".source = ./just/home.just;
+
+  # 8. Version control primitive (git)
+  programs.git = {
+    enable = true;
+    package = pkgs.gitMinimal;
+    includes = [
+      { path = "~/.config/git/config.local"; }
+      { path = "~/.gitconfig.local"; }
+    ];
+    settings = {
+      init.defaultBranch = "main";
+      pull.rebase = true;
+      push.autoSetupRemote = true;
+      fetch.prune = true;
+      diff.algorithm = "histogram";
+      merge.conflictStyle = "zdiff3";
+      rebase.autoStash = true;
+      branch.sort = "-committerdate";
+      column.ui = "auto";
+      commit.verbose = true;
+      rerere.enabled = true;
+      status = {
+        short = true;
+        branch = true;
+      };
+      alias = {
+        unstage = "reset HEAD --";
+        nuke = "reset --hard HEAD";
+        slog = "log --oneline";
+      };
+    };
+  };
 }

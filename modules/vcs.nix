@@ -35,21 +35,9 @@ in {
       } // userSettings;
     };
 
-    # 2. Git
+    # 2. Git (user settings & delta pager)
     programs.git = {
-      enable = true;
-      package = pkgs.gitMinimal;
-      includes = [
-        { path = "~/.gitconfig.local"; }
-      ];
-      settings = {
-        init.defaultBranch = "main";
-        pull.rebase = true;
-        push.autoSetupRemote = true;
-        diff.algorithm = "histogram";
-        merge.conflictStyle = "zdiff3";
-        fetch.prune = true;
-      } // userSettings;
+      settings = userSettings;
       iniContent.pager.blame = lib.mkForce "${lib.getExe pkgs.delta}";
     };
 
