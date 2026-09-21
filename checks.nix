@@ -13,6 +13,7 @@ in {
         "text"
         "monitoring"
         "utilities"
+        "container"
         "vcs"
         "agents"
       ];
@@ -27,6 +28,7 @@ in {
         "text"
         "monitoring"
         "utilities"
+        "container"
         "vcs"
         "agents"
       ];

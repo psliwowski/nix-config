@@ -9,10 +9,17 @@
     "text"
     "monitoring"
     "utilities"
+    "container"
     "vcs"
     "agents"
   ];
   configuration = {
+    # Optional defaults for new Podman machines:
+    # container.machine = {
+    #   cpu = 4;
+    #   memory = 10240; # MiB
+    #   disk = 150; # GiB
+    # };
     vcs.user = {
       name = "Nix User";
       email = "user@nix.com";

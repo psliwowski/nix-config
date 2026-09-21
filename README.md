@@ -62,6 +62,61 @@ jg home switch
 - **xh** — make HTTP requests.
 - **tealdeer** (`tldr`) — look up concise command examples.
 
+### `container` (optional)
+
+- **Podman** — run containers.
+- **Docker Compose** — run multi-container applications with `podman compose`.
+
+Add `"container"` to your `modules` list to enable it. On macOS, create a VM
+once with `podman machine init`, then start it with `podman machine start`.
+If you already have a Podman machine, start the existing machine instead.
+
+Optionally set defaults for new machines in your configuration:
+
+```nix
+configuration.container.machine = {
+  cpu = 4;
+  memory = 10240; # MiB
+  disk = 150; # GiB
+};
+```
+
+Each setting is optional; omitted or `null` values keep Podman's defaults.
+These settings generate `~/.config/containers/containers.conf.d/50-machine.conf`
+and apply when running `podman machine init`. They do not change existing VMs.
+
+The container module also installs `jg podman recreate`. It asks for confirmation,
+stops and removes the default VM, then creates a replacement using the applied
+machine defaults and leaves it stopped. This deletes the old VM's containers,
+images, and volumes.
+
+Each command below starts the existing default VM if needed. Run `up`, `down`,
+and `pull` from the directory containing your Compose file; `ps`, `images`, and
+`usage` work from any directory and report across projects:
+
+| Command | Action |
+| :--- | :--- |
+| `jg podman start` | Start the default VM if stopped. |
+| `jg podman stop` | Stop the default VM if no containers are running (`-f`/`--force` to force). |
+| `jg podman recreate` | Delete and recreate the default VM using applied config. |
+| `jg podman up` | Start services in the background (`compose up -d`). |
+| `jg podman down` | Remove the project's containers and networks, then stop the VM if no containers remain running. |
+| `jg podman pull` | Download service images, then stop the VM if no containers are running. |
+| `jg podman ps` | List all containers, then stop the VM if no containers are running. |
+| `jg podman images` | List images, then stop the VM if no containers are running. |
+| `jg podman usage` | Show container, image, and volume disk usage, then stop the VM if no containers are running. |
+
+Service names and Compose options are forwarded, for example `jg podman up db`
+or `jg podman up --build`. `ps`, `images`, and `usage` forward other options to
+Podman, for example `jg podman usage --verbose`.
+Automatic shutdown happens only after a successful command and container check, and keeps the VM running if other containers are
+active. These helpers assume your current Podman connection targets the default
+machine. If the VM does not exist, create it first with `podman machine init`.
+
+Run `jg home switch` to install the commands and apply any machine setting
+changes before recreating the VM. Start the replacement with
+`podman machine start` when needed. Use native `podman` commands for other actions.
+
 ### `vcs` (optional)
 
 - **Git** (`gitMinimal`) — version control.
