@@ -7,8 +7,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    devshell = {
+      url = "github:numtide/devshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    flake-utils.url = "github:numtide/flake-utils";
     cfg = {
-      url = "path:./nix-config-template.nix";
+      url = "path:./nix/nix-config-template.nix";
       flake = false;
     };
   };
@@ -17,49 +22,28 @@
     {
       nixpkgs,
       home-manager,
+      devshell,
+      flake-utils,
       cfg,
       ...
     }:
     let
-      lib = import ./lib.nix;
+      lib = import ./nix/lib.nix;
       cfgData = lib.mkCfg (import cfg);
       mkHost = lib.mkHost { inherit nixpkgs home-manager; };
-      forAllSystems = nixpkgs.lib.genAttrs [
-        "aarch64-darwin"
-        "x86_64-linux"
-      ];
     in
     {
-      devShells = forAllSystems (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-        {
-          default = pkgs.mkShellNoCC {
-            packages = with pkgs; [
-              just
-              treefmt
-              nixfmt
-              stylua
-              shfmt
-              statix
-              deadnix
-              shellcheck
-              prettier
-              markdownlint-cli2
-            ];
-          };
-        }
-      );
-
       homeConfigurations = {
         "${cfgData.host.username}" = mkHost cfgData;
-        default = mkHost cfgData;
       };
 
-      checks = import ./checks.nix {
+      checks = (import ./nix/checks.nix {
+        inherit flake-utils;
         mkHost = c: mkHost (lib.mkCfg c);
-      };
+      }).checks;
+
+      devShells = (import ./nix/devshell.nix {
+        inherit nixpkgs flake-utils devshell;
+      }).devShells;
     };
 }

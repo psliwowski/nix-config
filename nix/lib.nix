@@ -56,7 +56,7 @@ rec {
     {
       nixpkgs,
       home-manager,
-      modulesDir ? ./modules,
+      modulesDir ? ../modules,
     }:
     cfg:
     let
