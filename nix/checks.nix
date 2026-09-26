@@ -9,22 +9,20 @@ let
     "x86_64-linux"
   ];
 in
-flake-utils.lib.eachSystem supportedSystems (
-  system: {
-    checks.activation =
-      (mkHost {
-        host = {
-          username = "runner";
-          inherit system;
-        };
-        modules = [
-          "text"
-          "monitoring"
-          "utilities"
-          "container"
-          "vcs"
-          "agents"
-        ];
-      }).activationPackage;
-  }
-)
+flake-utils.lib.eachSystem supportedSystems (system: {
+  checks.activation =
+    (mkHost {
+      host = {
+        username = "runner";
+        inherit system;
+      };
+      modules = [
+        "text"
+        "monitoring"
+        "utilities"
+        "container"
+        "vcs"
+        "agents"
+      ];
+    }).activationPackage;
+})

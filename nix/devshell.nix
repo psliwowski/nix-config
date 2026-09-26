@@ -1,7 +1,6 @@
 {
   nixpkgs,
   flake-utils,
-  devshell,
 }:
 let
   supportedSystems = [
@@ -13,17 +12,19 @@ in
 flake-utils.lib.eachSystem supportedSystems (
   system:
   let
-    pkgs = import nixpkgs {
-      inherit system;
-      overlays = [ devshell.overlays.default ];
-    };
+    pkgs = nixpkgs.legacyPackages.${system};
   in
   {
-    devShells.default = pkgs.devshell.mkShell {
+    devShells.default = pkgs.mkShellNoCC {
       name = "nix-config";
 
       packages = with pkgs; [
         just
+        treefmt
+        dprint
+        nixfmt
+        shfmt
+        stylua
       ];
     };
   }

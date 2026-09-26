@@ -4,8 +4,16 @@ set dotenv-load := false
 default:
     @just --list
 
-# Check and evaluate every supported system without building
-check:
+# Format repository files with treefmt
+fmt:
+    treefmt
+
+# Check formatting without modifying files
+fmt-check:
+    treefmt --ci
+
+# Check formatting and evaluate every supported system without building
+check: fmt-check
     nix flake check --all-systems --no-build --no-update-lock-file
 
 # Pull, update only nixpkgs, commit the lockfile, and push

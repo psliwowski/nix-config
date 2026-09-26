@@ -4,14 +4,14 @@ A terminal environment and dotfiles for macOS and Linux, managed with Nix Flakes
 
 ## Configuration files
 
-| File             | Purpose                                                             |
-| :--------------- | :------------------------------------------------------------------ |
-| `flake.nix`      | Declares inputs, outputs, and home configurations.                  |
-| `nix/lib.nix`    | Validates host settings and constructs Home Manager configurations. |
+| File               | Purpose                                                             |
+| :----------------- | :------------------------------------------------------------------ |
+| `flake.nix`        | Declares inputs, outputs, and home configurations.                  |
+| `nix/lib.nix`      | Validates host settings and constructs Home Manager configurations. |
 | `nix/checks.nix`   | Defines macOS and Linux configuration checks.                       |
 | `nix/devshell.nix` | Defines reproducible development shell environments.                |
 | `modules/`         | Defines the installed tools and user settings.                      |
-| `flake.lock`     | Pins external dependency revisions.                                 |
+| `flake.lock`       | Pins external dependency revisions.                                 |
 
 ## Install
 
@@ -176,11 +176,13 @@ configuration.vcs.user = {
 
 For repository maintenance, run these inside the checkout:
 
-| Command            | Action                                                    |
-| :----------------- | :-------------------------------------------------------- |
-| `just`             | List repository commands.                                 |
-| `just check`       | Evaluate macOS and Linux configurations without building. |
-| `just update-pkgs` | Update nixpkgs, commit, and push.                         |
+| Command            | Action                                                                           |
+| :----------------- | :------------------------------------------------------------------------------- |
+| `just`             | List repository commands.                                                        |
+| `just fmt`         | Format repository files with treefmt.                                            |
+| `just fmt-check`   | Check formatting without modifying files.                                        |
+| `just check`       | Check formatting, then evaluate macOS and Linux configurations without building. |
+| `just update-pkgs` | Update nixpkgs, commit, and push.                                                |
 
 ### Editor language tools
 

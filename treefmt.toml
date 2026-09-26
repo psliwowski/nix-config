@@ -1,0 +1,17 @@
+[formatter.nix]
+command = "nixfmt"
+includes = ["*.nix"]
+
+[formatter.lua]
+command = "stylua"
+includes = ["*.lua"]
+
+[formatter.shell]
+command = "shfmt"
+options = ["-w", "-ci", "-i", "2"]
+includes = ["*.sh"]
+
+[formatter.markdown]
+command = "dprint"
+options = ["fmt"]
+includes = ["*.md", "*.markdown"]

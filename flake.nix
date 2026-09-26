@@ -7,10 +7,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    devshell = {
-      url = "github:numtide/devshell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     flake-utils.url = "github:numtide/flake-utils";
     cfg = {
       url = "path:./nix/nix-config-template.nix";
@@ -22,7 +18,6 @@
     {
       nixpkgs,
       home-manager,
-      devshell,
       flake-utils,
       cfg,
       ...
@@ -37,13 +32,15 @@
         "${cfgData.host.username}" = mkHost cfgData;
       };
 
-      checks = (import ./nix/checks.nix {
-        inherit flake-utils;
-        mkHost = c: mkHost (lib.mkCfg c);
-      }).checks;
+      checks =
+        (import ./nix/checks.nix {
+          inherit flake-utils;
+          mkHost = c: mkHost (lib.mkCfg c);
+        }).checks;
 
-      devShells = (import ./nix/devshell.nix {
-        inherit nixpkgs flake-utils devshell;
-      }).devShells;
+      devShells =
+        (import ./nix/devshell.nix {
+          inherit nixpkgs flake-utils;
+        }).devShells;
     };
 }
