@@ -1,6 +1,7 @@
 # Build artifacts
 result
 result-*
+.direnv
 
 # Editor swap files & temporary files
 *.swp

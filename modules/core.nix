@@ -168,4 +168,11 @@
       };
     };
   };
+
+  # 9. Environment management (direnv & nix-direnv)
+  programs.direnv = {
+    enable = true;
+    enableBashIntegration = true;
+    nix-direnv.enable = true;
+  };
 }
