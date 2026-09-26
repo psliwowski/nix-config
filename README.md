@@ -2,6 +2,17 @@
 
 A terminal environment and dotfiles for macOS and Linux, managed with Nix Flakes and Home Manager.
 
+## Configuration files
+
+| File             | Purpose                                                             |
+| :--------------- | :------------------------------------------------------------------ |
+| `flake.nix`      | Declares inputs, outputs, and home configurations.                  |
+| `nix/lib.nix`    | Validates host settings and constructs Home Manager configurations. |
+| `nix/checks.nix`   | Defines macOS and Linux configuration checks.                       |
+| `nix/devshell.nix` | Defines reproducible development shell environments.                |
+| `modules/`         | Defines the installed tools and user settings.                      |
+| `flake.lock`     | Pins external dependency revisions.                                 |
+
 ## Install
 
 ```bash
@@ -42,6 +53,7 @@ jg home switch
 - **ripgrep** (`rg`) — search file contents.
 - **fd** — find files.
 - **eza** — directory listings, used by the `ls`, `ll`, `la`, and `lt` aliases.
+- **direnv** — per-directory environment variables with `nix-direnv` Flake/Nix caching support.
 - **just** — run common commands.
 - **Home Manager** — manage and activate your environment.
 
@@ -54,17 +66,8 @@ jg home switch
 - **sd** — search and replace text.
 - **choose** — select columns and fields.
 - **jq** — query and transform JSON.
-- **nil** — language server for Nix (`nil_ls`).
-- **nixfmt** — formatter for Nix code.
-- **lua-language-server** — language server for Lua (`lua_ls`).
-- **stylua** — code formatter for Lua.
-- **bash-language-server** — language server for Shell scripts (`bashls`).
-- **shellcheck** — linter and static analysis for Shell scripts.
-- **shfmt** — formatter for Shell scripts.
-- **Prettier** — formatter for Markdown and other supported languages.
-- **markdownlint-cli2** — Markdown structure and style checks.
-- **Marksman** — Markdown language server for links, headings, and references.
-- **markdown-toc** — update explicitly marked tables of contents.
+- No language servers, formatters, or linters are bundled. Add language-specific extensions and
+  supply their executables through project development shells or optional Home Manager modules.
 - Includes `tree-sitter` CLI for compiling Treesitter parsers (assumes host OS provides C compiler
   and `make`).
 
@@ -82,12 +85,15 @@ jg home switch
 
 ### `container` (optional)
 
-- **Podman** — run containers.
+- **Podman** — run containers; on macOS, only the AppleHV (`vfkit`) backend is included.
 - **Docker Compose** — run multi-container applications with `podman compose`.
 
 Add `"container"` to your `modules` list to enable it. On macOS, create a VM once with
 `podman machine init`, then start it with `podman machine start`. If you already have a Podman
 machine, start the existing machine instead.
+
+The macOS configuration selects `applehv` for new machines. Existing machines using another provider
+require migration before using this package; Linux keeps the standard Podman package.
 
 Optionally set defaults for new machines in your configuration:
 
@@ -170,38 +176,18 @@ configuration.vcs.user = {
 
 For repository maintenance, run these inside the checkout:
 
-| Command            | Action                                                                                         |
-| :----------------- | :--------------------------------------------------------------------------------------------- |
-| `just`             | List repository commands.                                                                      |
-| `just fmt`         | Format Nix, Lua, shell, and Markdown files.                                                    |
-| `just fmt-check`   | Check formatting without modifying files.                                                      |
-| `just lint`        | Run Statix, deadnix, ShellCheck, markdownlint-cli2, and justfile validation.                   |
-| `just check`       | Run formatting and lint checks, then evaluate macOS and Linux configurations without building. |
-| `just update-pkgs` | Update nixpkgs, commit, and push.                                                              |
+| Command            | Action                                                    |
+| :----------------- | :-------------------------------------------------------- |
+| `just`             | List repository commands.                                 |
+| `just check`       | Evaluate macOS and Linux configurations without building. |
+| `just update-pkgs` | Update nixpkgs, commit, and push.                         |
 
-Formatting and linting commands use `nix develop` to load tools pinned by `flake.lock`; no Home
-Manager activation is needed. You can also enter the development shell with `nix develop`. Treefmt
-formats Nix with `nixfmt`, Lua with StyLua, shell scripts with `shfmt`, and Markdown with Prettier.
-Linting covers Nix, standalone shell scripts, and Markdown; justfiles are syntax-checked. Run
-`just fmt` before `just check`.
+### Editor language tools
 
-### Formatting defaults and Markdown editing
-
-This repository targets 100 columns using its EditorConfig, StyLua, Prettier, and markdownlint
-configuration. Nixfmt also uses 100 columns. Neovim uses project formatting settings and shows a
-guide after column 100. Other projects use their own configuration or the formatters' defaults; Home
-Manager installs standard tools without global formatting overrides.
-
-This is a formatting target, not a universal hard limit. Shell formatting with `shfmt` does not wrap
-long commands, and some language formatters have no configurable width. Markdown lint checks prose
-and headings at 100 columns, with exceptions for code blocks, tables, and unbreakable URLs. Neovim
-shows the column guide without imposing a global wrapping rule.
-
-LazyVim's Markdown extra provides completion and navigation through Marksman, lint diagnostics,
-rendered Markdown, and browser preview. Use `<leader>um` to toggle rendered Markdown and
-`<leader>cp` for browser preview. Tables of contents update when the document contains
-`<!-- toc -->` and `<!-- tocstop -->` markers. Neovim uses LazyVim's default Markdown formatting
-pipeline, including Prettier, conditional markdownlint fixes, and table-of-contents updates.
+Neovim keeps LazyVim's integration plugins available, but starts without configured language
+servers, formatters, or linters. To opt into a language, add its LazyVim extra at the marked
+location in `modules/nvim/lua/config/lazy.lua`, then supply the required executables. Mason remains
+disabled; a language extra does not automatically install its tools.
 
 ## Uninstall
 
