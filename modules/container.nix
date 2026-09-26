@@ -6,10 +6,21 @@
 }:
 let
   cfg = config.container.machine;
+  # Keep only AppleHV's vfkit backend in the macOS runtime wrapper.
+  podman =
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      pkgs.podman.overrideAttrs (old: {
+        passthru = old.passthru // {
+          binPath = lib.makeBinPath [ pkgs.vfkit ];
+        };
+      })
+    else
+      pkgs.podman;
   machineSettings = lib.filterAttrs (_: value: value != null) {
     cpus = cfg.cpu;
     inherit (cfg) memory;
     disk_size = cfg.disk;
+    provider = if pkgs.stdenv.hostPlatform.isDarwin then "applehv" else null;
   };
 in
 {
@@ -36,9 +47,9 @@ in
       source = ./just/podman.just;
     };
 
-    home.packages = with pkgs; [
+    home.packages = [
       podman
-      docker-compose
+      pkgs.docker-compose
     ];
 
     xdg.configFile."containers/containers.conf.d/50-machine.conf" = lib.mkIf (machineSettings != { }) {
