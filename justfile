@@ -4,20 +4,8 @@ set dotenv-load := false
 default:
     @just --list
 
-# Format Nix, Lua, shell, and Markdown files with pinned tools
-fmt:
-    nix develop --no-update-lock-file -c treefmt
-
-# Verify formatting without modifying files
-fmt-check:
-    nix develop --no-update-lock-file -c treefmt --ci
-
-# Lint Nix, shell, and Markdown files and validate justfiles
-lint:
-    nix develop --no-update-lock-file -c bash scripts/lint.sh
-
-# Check formatting, linting, and evaluate every supported system without building
-check: fmt-check lint
+# Check and evaluate every supported system without building
+check:
     nix flake check --all-systems --no-build --no-update-lock-file
 
 # Pull, update only nixpkgs, commit the lockfile, and push

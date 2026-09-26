@@ -7,33 +7,8 @@
     viAlias = true;
     vimAlias = true;
 
-    # Dependencies & language servers for LazyVim
-    extraPackages = with pkgs; [
-      tree-sitter
-
-      # Lua language server & formatter
-      lua-language-server
-      stylua
-
-      # JSON language server
-      vscode-langservers-extracted
-
-      # Markdown language server, formatter, linter & table of contents
-      marksman
-      prettier
-      markdownlint-cli2
-      markdown-toc
-
-      # Nix language server, formatter & linter
-      nil
-      nixfmt
-      statix
-
-      # Shell (sh/bash) language server, linter & formatter
-      bash-language-server
-      shellcheck
-      shfmt
-    ];
+    # Treesitter syntax parsing is independent of LSPs, formatters, and linters.
+    extraPackages = [ pkgs.tree-sitter ];
   };
 
   # Link version-controlled LazyVim configuration into ~/.config/nvim
@@ -61,13 +36,5 @@
   home.packages = with pkgs; [
     sd
     choose
-    stylua
-    nixfmt
-    shfmt
-    shellcheck
-    prettier
-    markdownlint-cli2
-    markdown-toc
-    marksman
   ];
 }
