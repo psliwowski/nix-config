@@ -4,6 +4,10 @@ set dotenv-load := false
 default:
     @just --list
 
+# Show available repository commands
+help:
+    @just --list
+
 # Format repository files with treefmt
 fmt:
     treefmt

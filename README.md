@@ -180,6 +180,7 @@ For repository maintenance, run these inside the checkout:
 | Command            | Action                                                                           |
 | :----------------- | :------------------------------------------------------------------------------- |
 | `just`             | List repository commands.                                                        |
+| `just help`        | Show available repository commands.                                              |
 | `just fmt`         | Format repository files with treefmt.                                            |
 | `just fmt-check`   | Check formatting without modifying files.                                        |
 | `just check`       | Check formatting, then evaluate macOS and Linux configurations without building. |
