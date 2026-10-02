@@ -51,7 +51,7 @@ require("lazy").setup({
 		version = false, -- always use the latest git commit
 		-- version = "*", -- try installing the latest stable version for plugins that support semver
 	},
-	install = { colorscheme = { "tokyonight", "habamax" } },
+	install = { colorscheme = { "github_dark_default", "habamax" } },
 	checker = {
 		enabled = true, -- check periodically; install updates manually with :Lazy update
 		notify = false, -- suppress update notifications
