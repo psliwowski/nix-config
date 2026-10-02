@@ -36,3 +36,7 @@ gc:
 # List past Home Manager generations
 generations:
     home-manager generations
+
+# List packages installed by Home Manager
+packages:
+    home-manager packages

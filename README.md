@@ -172,6 +172,7 @@ configuration.vcs.user = {
 | `jg home pull`        | Pull committed configuration and package updates. Run `jg home switch` afterward to apply them. |
 | `jg home repo`        | Open a shell in the repository; use `exit` to return.                                           |
 | `jg home generations` | List past Home Manager generations.                                                             |
+| `jg home packages`    | List packages installed by Home Manager.                                                        |
 | `jg home gc`          | Delete old Nix generations and collect garbage.                                                 |
 
 For repository maintenance, run these inside the checkout:
